@@ -3,7 +3,68 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import argparse
+import argparse, os
+import imread
+
+
+def melodia_neumerator(audio_file):
+
+    command = '../sonic_annotator/sonic-annotator -d vamp:mtg-melodia:melodia:melody ' + audio_file + ' -w csv --csv-force'
+    os.system(command)
+
+    csv_file = audio_file.replace(os.path.basename(audio_file), os.path.basename(audio_file) + '_vamp_mtg-melodia_melodia_melody.csv')
+    neumerator(csv_file)
+    
+
+def make_neume_chart(times, pitches, basename):
+
+    # background_file = 'images/neumy A.bmp'
+    background_file = 'images/neumy text 3.bmp'
+    manuscript = imread.imread(background_file)
+
+    my_dpi = 30
+    plt.figure(figsize=(577/my_dpi,216/my_dpi), dpi=my_dpi, frameon=False)
+    plt.imshow(manuscript)
+    note_start = 100
+    note_end = 520
+    pitch_offset = 220
+    pitch_scale = 2.5
+    # plt.plot([note_start, note_start],[100,150],'r')
+    # plt.plot([note_end, note_end],[100,150],'r')
+
+    pitch_time_range = times[-1] - times[0]
+    manuscript_time_range = note_end - note_start
+
+    times_scaled = (times - times[0]) * (manuscript_time_range/pitch_time_range) + note_start
+
+    # E (lowest line is pitch value 26)
+
+    pitches_scaled = 136 - (np.array(pitches)-26) * pitch_scale
+    plt.plot(times_scaled, pitches_scaled, 'ks', markersize=12)
+
+    # plt.plot([100, 200],[136,136],'r')
+    # plt.plot([100, 200],[127,127],'r')
+
+    # plt.show()
+
+    plt.axis([0,576,215,0])
+    plt.axis('off')
+    plt.tight_layout()
+
+
+    plt.savefig('images/generated/' + basename.replace('csv','png'), dpi=my_dpi * 10)
+
+
+def pitch_changes(times, cents):
+    ts = []
+    ps = []
+    prevp = None
+    for t, p in zip(times, cents):
+        if p!=prevp:
+            ts.append(t)
+            ps.append(p)
+            prevp = p
+    return ts, ps
 
 
 def majorityfilt(x, n):
@@ -27,10 +88,19 @@ def neumerator(csv_file):
 
     cents_semi_maj = majorityfilt(np.array([int(c) for c in cents_semi_nan]), 300)
 
-    plt.figure(figsize=(18,6))
-    plt.plot(time_nan, cents_semi_maj)
-    plt.axis([0, 25, 20, 40])
-    plt.show()
+    # plt.figure(figsize=(18,6))
+    # plt.plot(time_nan, cents_semi_maj)
+    # plt.axis([0, 25, 20, 40])
+    # plt.show()
+
+    ts, ps = pitch_changes(time_nan, cents_semi_maj)
+
+    # plt.figure(figsize=(18,6))
+    # plt.plot(ts, ps, 'o')
+    # plt.axis([0, 25, 20, 40])
+    # plt.show()
+
+    make_neume_chart(ts, ps, os.path.basename(csv_file))
 
 
 if __name__ == "__main__":
@@ -40,4 +110,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    neumerator(args.csv_file)
+    melodia_neumerator(args.csv_file)
+
+    # neumerator(args.csv_file)
