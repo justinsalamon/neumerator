@@ -12,14 +12,18 @@ def melodia_neumerator(audio_file):
     command = '../sonic_annotator/sonic-annotator -d vamp:mtg-melodia:melodia:melody ' + audio_file + ' -w csv --csv-force'
     os.system(command)
 
-    csv_file = audio_file.replace(os.path.basename(audio_file), os.path.basename(audio_file) + '_vamp_mtg-melodia_melodia_melody.csv')
+    csv_file = audio_file.replace(os.path.basename(audio_file), os.path.basename(audio_file)[:-4] + '_vamp_mtg-melodia_melodia_melody.csv')
     neumerator(csv_file)
-    
+    os.remove(csv_file)
+
 
 def make_neume_chart(times, pitches, basename):
 
     # background_file = 'images/neumy A.bmp'
-    background_file = 'images/neumy text 3.bmp'
+    # background_file = 'images/neumy text 3.bmp'
+    # background_file = 'images/neumy neumy neumy.bmp'
+    background_file = 'images/neumy uni.bmp'
+    # background_file = 'images/big uni.bmp'
     manuscript = imread.imread(background_file)
 
     my_dpi = 30
@@ -79,7 +83,7 @@ def majorityfilt(x, n):
 
 def neumerator(csv_file):
 
-    pitch = pd.read_csv('pitch/generosa.csv', header=None)
+    pitch = pd.read_csv(csv_file, header=None)
     cents_semi = 12*np.log2(pitch[1]/55.)
     cents_semi_round = np.round(cents_semi)
 
