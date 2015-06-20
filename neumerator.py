@@ -22,19 +22,30 @@ def make_neume_chart(times, pitches, basename):
     # background_file = 'images/neumy A.bmp'
     # background_file = 'images/neumy text 3.bmp'
     # background_file = 'images/neumy neumy neumy.bmp'
-    background_file = 'images/neumy uni.bmp'
-    # background_file = 'images/big uni.bmp'
+    # background_file = 'images/neumy uni.bmp'
+    background_file = 'images/big uni.bmp'
     manuscript = imread.imread(background_file)
 
-    my_dpi = 30
-    plt.figure(figsize=(577/my_dpi,216/my_dpi), dpi=my_dpi, frameon=False)
+    # small version: works
+    # my_dpi = 30
+    # plt.figure(figsize=(577/my_dpi,216/my_dpi), dpi=my_dpi, frameon=False)
+    # plt.imshow(manuscript)
+    # note_start = 100
+    # note_end = 520
+    # pitch_offset = 220
+    # pitch_scale = 2.5
+    # # plt.plot([note_start, note_start],[100,150],'r')
+    # # plt.plot([note_end, note_end],[100,150],'r')
+
+    my_dpi = 72
+    plt.figure(figsize=(2401/my_dpi,901/my_dpi), dpi=my_dpi, frameon=False)
     plt.imshow(manuscript)
-    note_start = 100
-    note_end = 520
+    note_start = 350
+    note_end = 2100
     pitch_offset = 220
-    pitch_scale = 2.5
-    # plt.plot([note_start, note_start],[100,150],'r')
-    # plt.plot([note_end, note_end],[100,150],'r')
+    pitch_scale = 8
+    plt.plot([note_start, note_start],[100,500],'r')
+    plt.plot([note_end, note_end],[100,500],'r')
 
     pitch_time_range = times[-1] - times[0]
     manuscript_time_range = note_end - note_start
@@ -43,20 +54,28 @@ def make_neume_chart(times, pitches, basename):
 
     # E (lowest line is pitch value 26)
 
-    pitches_scaled = 136 - (np.array(pitches)-26) * pitch_scale
-    plt.plot(times_scaled, pitches_scaled, 'ks', markersize=12)
+    # small works
+    # pitches_scaled = 136 - (np.array(pitches)-26) * pitch_scale
+
+    pitches_scaled = 565 - (np.array(pitches)-26) * pitch_scale
+
+    # small works
+    # plt.plot(times_scaled, pitches_scaled, 'ks', markersize=12)
+
+    plt.plot(times_scaled, pitches_scaled, 'ks', markersize=24)
 
     # plt.plot([100, 200],[136,136],'r')
     # plt.plot([100, 200],[127,127],'r')
 
     # plt.show()
 
-    plt.axis([0,576,215,0])
+    plt.axis([0,2400,900,0])
     plt.axis('off')
     plt.tight_layout()
 
 
-    plt.savefig('images/generated/' + basename.replace('csv','png'), dpi=my_dpi * 10)
+    # plt.savefig('images/generated/' + basename.replace('csv','png'), dpi=my_dpi * 10)
+    plt.savefig('images/generated/' + basename.replace('csv','png'), dpi=my_dpi)
 
 
 def pitch_changes(times, cents):
