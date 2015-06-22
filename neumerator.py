@@ -44,8 +44,8 @@ def make_neume_chart(times, pitches, basename):
     note_end = 2100
     pitch_offset = 220
     pitch_scale = 8
-    plt.plot([note_start, note_start],[100,500],'r')
-    plt.plot([note_end, note_end],[100,500],'r')
+    # plt.plot([note_start, note_start],[100,500],'r')
+    # plt.plot([note_end, note_end],[100,500],'r')
 
     pitch_time_range = times[-1] - times[0]
     manuscript_time_range = note_end - note_start
